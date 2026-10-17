@@ -35,3 +35,6 @@ bin/
 
 # SQLite database
 data/chat.db
+
+# SQLlite jar
+lib/
