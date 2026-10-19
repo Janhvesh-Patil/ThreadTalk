@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class HttpUtils {
     private String method;
@@ -104,21 +105,15 @@ public class HttpUtils {
     }
 
     public static String messagesToJson(List<Message> messages) {
-        StringBuilder JSONArray = new StringBuilder("[");
+        String elements = messages.stream()
+                .map(m -> "{" +
+                        "\"id\":" + m.getId() + "," +
+                        "\"username\":\"" + m.getUsername() + "\"," +
+                        "\"content\":\"" + m.getContent() + "\"," +
+                        "\"timestamp\":\"" + m.getTimestamp() + "\"" +
+                        "}")
+                .collect(Collectors.joining(","));
 
-        for (int i = 0; i < messages.size(); i++) {
-            String document = "{" +
-                    "\"id\":" + messages.get(i).getId() + "," +
-                    "\"username\":" + "\"" + messages.get(i).getUsername() + "\"" + "," +
-                    "\"content\":" + "\"" + messages.get(i).getContent() + "\"" + "," +
-                    "\"timestamp\":" + "\"" + messages.get(i).getTimestamp() + "\"" +
-                    "}";
-
-            JSONArray.append(document);
-            if (i < messages.size() - 1) JSONArray.append(",");
-        }
-
-        JSONArray.append("]");
-        return JSONArray.toString();
+        return "[" + elements + "]";
     }
 }
