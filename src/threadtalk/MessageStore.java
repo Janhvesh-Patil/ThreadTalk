@@ -20,6 +20,11 @@ public class MessageStore {
         return List.copyOf(messages.subList(fromIndex, messages.size()));
     }
 
+    public void loadMessage(Message message) {
+        messages.add(message);
+        lastId = message.getId() + 1;
+    }
+
     public List<Message> getAllMessages() {
         return List.copyOf(messages);
     }

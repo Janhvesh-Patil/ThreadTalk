@@ -25,7 +25,7 @@ public class Server {
              ServerSocket serverSocket = new ServerSocket(PORT)) {
 
             List<Message> allMessages = database.loadAllMessages();
-            allMessages.forEach(m -> messageStore.addMessage(m.getUsername(), m.getContent()));
+            allMessages.forEach(messageStore::loadMessage);
 
             while (true) {
                 Socket socket = serverSocket.accept();
