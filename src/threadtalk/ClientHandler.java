@@ -68,9 +68,9 @@ public class ClientHandler implements Runnable {
                     String[] body = httpUtils.getBody().split("&");
                     String username = body[0].split("=")[1];
                     String content = body[1].split("=")[1];
-                    messageStore.addMessage(username, content);
+                    Message message = messageStore.addMessage(username, content);
                     try {
-                        database.saveMessage(messageStore.getAllMessages().getLast());
+                        database.saveMessage(message);
                     } catch (SQLException e) {
                         return HttpUtils.buildErrorResponse(500, "Could not save message");
                     }
