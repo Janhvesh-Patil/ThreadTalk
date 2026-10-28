@@ -8,24 +8,24 @@ public class MessageStore {
     private final List<Message> messages = new ArrayList<>();
     private int lastId = 0;
 
-    public Message addMessage(String username, String content) {
+    public synchronized Message addMessage(String username, String content) {
         Message message = new Message(lastId, username, content, LocalDateTime.now());
         messages.add(message);
         lastId++;
         return message;
     }
 
-    public List<Message> getMessagesSince(int fromIndex) {
+    public synchronized List<Message> getMessagesSince(int fromIndex) {
         if (fromIndex < 0 || fromIndex >= messages.size()) return new ArrayList<>();
         return List.copyOf(messages.subList(fromIndex, messages.size()));
     }
 
-    public void loadMessage(Message message) {
+    public synchronized void loadMessage(Message message) {
         messages.add(message);
         lastId = message.getId() + 1;
     }
 
-    public List<Message> getAllMessages() {
+    public synchronized List<Message> getAllMessages() {
         return List.copyOf(messages);
     }
 }
