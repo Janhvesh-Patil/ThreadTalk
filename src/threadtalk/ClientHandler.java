@@ -2,6 +2,7 @@ package threadtalk;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
@@ -58,6 +59,22 @@ public class ClientHandler implements Runnable {
                     } catch (IOException e) {
                         return HttpUtils.buildErrorResponse(500, "Could not read file");
                     }
+                } else if (path.equals("/style.css")) {
+                    try {
+                        return HttpUtils.buildTextResponse(
+                                readFile("frontend/style.css"),
+                                "text/css"
+                        );
+                    } catch (IOException e) {
+                        return HttpUtils.buildErrorResponse(500, "Could not read CSS file");
+                    }
+                } else if (path.equals("/script.js")) {
+                    try {
+                        return HttpUtils.buildTextResponse(readFile("frontend/script.js"),
+                                "application/javascript");
+                    } catch (IOException e) {
+                        return HttpUtils.buildErrorResponse(500, "Could not read JavaScript file");
+                    }
                 } else if (path.equals("/messages")) {
                     List<Message> messages = messageStore.getAllMessages();
                     String jsonMessages = HttpUtils.messagesToJson(messages);
@@ -66,8 +83,8 @@ public class ClientHandler implements Runnable {
             } case "POST" -> {
                 if (path.equals("/send")) {
                     String[] body = httpUtils.getBody().split("&");
-                    String username = body[0].split("=")[1];
-                    String content = body[1].split("=")[1];
+                    String username = URLDecoder.decode(body[0].split("=")[1], StandardCharsets.UTF_8);
+                    String content = URLDecoder.decode(body[1].split("=")[1], StandardCharsets.UTF_8);
                     Message message = messageStore.addMessage(username, content);
                     try {
                         database.saveMessage(message);

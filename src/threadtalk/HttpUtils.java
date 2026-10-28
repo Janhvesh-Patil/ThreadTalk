@@ -108,12 +108,33 @@ public class HttpUtils {
         String elements = messages.stream()
                 .map(m -> "{" +
                         "\"id\":" + m.getId() + "," +
-                        "\"username\":\"" + m.getUsername() + "\"," +
-                        "\"content\":\"" + m.getContent() + "\"," +
+                        "\"username\":\"" + escapeJson(m.getUsername()) + "\"," +
+                        "\"content\":\"" + escapeJson(m.getContent()) + "\"," +
                         "\"timestamp\":\"" + m.getTimestamp() + "\"" +
                         "}")
                 .collect(Collectors.joining(","));
 
         return "[" + elements + "]";
+    }
+
+
+    public static String buildTextResponse(String content, String contentType) {
+        return "HTTP/1.1 200 OK\r\n" +
+                "Content-Type: " + contentType + "; charset=UTF-8\r\n" +
+                "Content-Length: " +
+                content.getBytes(StandardCharsets.UTF_8).length + "\r\n" +
+                "Access-Control-Allow-Origin: *\r\n" +
+                "\r\n" +
+                content;
+    }
+
+
+    private static String escapeJson(String value) {
+        return value
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }
