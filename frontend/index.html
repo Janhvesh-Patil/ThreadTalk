@@ -1,10 +1,306 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
 
+    <title>ThreadTalk — Chat Together</title>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gray-50 text-gray-900 antialiased">
+
+    <main class="mx-auto flex min-h-screen max-w-5xl flex-col px-4 py-5 sm:px-6 sm:py-8">
+
+        <!-- ==================== HEADER ==================== -->
+        <header class="mb-6 flex items-center justify-between gap-4">
+
+            <div class="flex items-center gap-3">
+
+                <!-- Logo -->
+                <div class="flex h-12 w-12 items-center justify-center
+                            rounded-2xl bg-green-100 text-green-700">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="26"
+                         height="26"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8
+                                 8.5 8.5 0 0 1-7.6 4.7
+                                 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7
+                                 a8.4 8.4 0 0 1-.9-3.8
+                                 8.5 8.5 0 0 1 4.7-7.6
+                                 8.4 8.4 0 0 1 3.8-.9h.5
+                                 a8.5 8.5 0 0 1 8 8z"/>
+
+                    </svg>
+                </div>
+
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+                        Thread<span class="text-green-600">Talk</span>
+                    </h1>
+
+                    <p class="mt-0.5 text-sm text-gray-500">
+                        A simple space to connect.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Connection status: updated by script.js -->
+            <div class="flex items-center gap-2 rounded-full border
+                        border-gray-200 bg-white px-3 py-2 shadow-sm">
+
+                <span id="status-dot"
+                      class="h-2 w-2 rounded-full bg-amber-500"
+                      aria-hidden="true">
+                </span>
+
+                <span id="connection-status"
+                      class="text-xs font-medium text-gray-600"
+                      role="status"
+                      aria-live="polite">
+                    Connecting
+                </span>
+            </div>
+
+        </header>
+
+
+        <!-- ==================== CHAT PANEL ==================== -->
+        <section class="chat-panel flex min-h-0 flex-1 flex-col
+                        overflow-hidden rounded-3xl border border-gray-200
+                        bg-white shadow-sm">
+
+            <!-- Chat room heading -->
+            <div class="flex items-center justify-between border-b
+                        border-gray-100 px-5 py-4 sm:px-6">
+
+                <div>
+                    <h2 class="font-semibold text-gray-900">
+                        General Chat
+                    </h2>
+
+                    <p class="mt-1 text-xs text-gray-500">
+                        Messages shared with everyone
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 rounded-lg
+                            bg-green-50 px-3 py-2 text-xs
+                            font-medium text-green-700">
+
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"
+                          aria-hidden="true">
+                    </span>
+
+                    Public room
+                </div>
+
+            </div>
+
+
+            <!-- ==================== MESSAGE HISTORY ==================== -->
+            <!-- script.js inserts message elements into this container -->
+            <div id="messages"
+                 class="message-list flex-1 space-y-5 overflow-y-auto
+                        px-4 py-6 sm:px-6"
+                 role="log"
+                 aria-label="Chat messages"
+                 aria-live="polite"
+                 aria-relevant="additions">
+
+                <!-- Initial loading state -->
+                <div id="empty-state"
+                     class="flex min-h-64 flex-col items-center
+                            justify-center text-center">
+
+                    <div class="mb-4 flex h-14 w-14 items-center
+                                justify-center rounded-2xl
+                                bg-green-50 text-green-600">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="28"
+                             height="28"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.7"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+
+                            <path d="M21 15a4 4 0 0 1-4 4H7l-4 2V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+
+                            <path d="M8 10h8M8 14h5"/>
+
+                        </svg>
+                    </div>
+
+                    <p class="font-medium text-gray-800">
+                        Loading conversation...
+                    </p>
+
+                    <p class="mt-2 max-w-xs text-sm text-gray-500">
+                        Your messages will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================== MESSAGE COMPOSER ==================== -->
+            <div class="border-t border-gray-100 bg-white p-4 sm:p-6">
+
+                <form id="message-form" class="space-y-4">
+
+                    <!-- Username and message fields -->
+                    <div class="flex flex-col gap-4 sm:flex-row">
+
+                        <!-- Username -->
+                        <div class="sm:w-48 sm:shrink-0">
+
+                            <label for="username"
+                                   class="mb-1.5 block text-xs
+                                          font-medium text-gray-600">
+                                Your username
+                            </label>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="Enter your name"
+                                maxlength="40"
+                                autocomplete="nickname"
+                                required
+                                class="w-full rounded-xl border border-gray-200
+                                       bg-gray-50 px-4 py-3 text-sm
+                                       text-gray-900 placeholder:text-gray-400
+                                       outline-none transition
+                                       focus:border-green-500
+                                       focus:bg-white
+                                       focus:ring-4 focus:ring-green-100"
+                            >
+
+                        </div>
+
+
+                        <!-- Message -->
+                        <div class="min-w-0 flex-1">
+
+                            <label for="content"
+                                   class="mb-1.5 block text-xs
+                                          font-medium text-gray-600">
+                                Message
+                            </label>
+
+                            <textarea
+                                id="content"
+                                name="content"
+                                placeholder="Write a message..."
+                                rows="1"
+                                maxlength="2000"
+                                required
+                                class="w-full resize-none rounded-xl
+                                       border border-gray-200 bg-gray-50
+                                       px-4 py-3 text-sm text-gray-900
+                                       placeholder:text-gray-400 outline-none
+                                       transition focus:border-green-500
+                                       focus:bg-white
+                                       focus:ring-4 focus:ring-green-100"
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Form footer -->
+                    <div class="flex flex-wrap items-center
+                                justify-between gap-3">
+
+                        <p id="form-status"
+                           class="text-xs text-gray-500"
+                           role="status"
+                           aria-live="polite">
+
+                            Press Enter to send · Shift + Enter for a new line
+
+                        </p>
+
+                        <button
+                            type="submit"
+                            id="send-button"
+                            class="inline-flex items-center justify-center
+                                   gap-2 rounded-xl bg-green-600
+                                   px-5 py-2.5 text-sm font-semibold
+                                   text-white shadow-sm transition
+                                   hover:bg-green-700
+                                   focus:outline-none focus:ring-4
+                                   focus:ring-green-100
+                                   disabled:cursor-not-allowed
+                                   disabled:opacity-50">
+
+                            <span id="send-label">
+                                Send message
+                            </span>
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="17"
+                                 height="17"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+
+                                <path d="m22 2-7 20-4-9-9-4Z"/>
+                                <path d="M22 2 11 13"/>
+
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer class="pt-5 text-center text-xs text-gray-400">
+
+            ThreadTalk · Built with Java, sockets and threads
+
+        </footer>
+
+    </main>
+
+
+    <!-- JavaScript: defer ensures HTML is parsed before script execution -->
+    <script src="/script.js" defer></script>
+    
+    <div class="hidden bg-emerald-500 bg-amber-500"></div>
 </body>
 </html>

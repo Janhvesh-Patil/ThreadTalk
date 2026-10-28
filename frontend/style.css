@@ -1,0 +1,43 @@
+/* Chat history scrollbar */
+.message-list {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.message-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+/* Preserve line breaks and wrap long messages */
+.message-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Subtle animation when a message appears */
+.message-entry {
+  animation: appear 150ms ease-out;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-entry {
+    animation: none;
+  }
+}

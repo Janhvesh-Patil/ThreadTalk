@@ -51,34 +51,43 @@ public class ClientHandler implements Runnable {
         String method = httpUtils.getMethod();
         String path = httpUtils.getPath();
 
+        if (path.equals("/favicon.ico")) {
+            return "HTTP/1.1 204 No Content\r\n\r\n";
+        }
+
         switch (method) {
             case "GET" -> {
-                if (path.equals("/")) {
-                    try {
-                        return HttpUtils.buildHtmlResponse(readFile("frontend/index.html"));
-                    } catch (IOException e) {
-                        return HttpUtils.buildErrorResponse(500, "Could not read file");
+                switch (path) {
+                    case "/" -> {
+                        try {
+                            return HttpUtils.buildHtmlResponse(readFile("frontend/index.html"));
+                        } catch (IOException e) {
+                            return HttpUtils.buildErrorResponse(500, "Could not read file");
+                        }
                     }
-                } else if (path.equals("/style.css")) {
-                    try {
-                        return HttpUtils.buildTextResponse(
-                                readFile("frontend/style.css"),
-                                "text/css"
-                        );
-                    } catch (IOException e) {
-                        return HttpUtils.buildErrorResponse(500, "Could not read CSS file");
+                    case "/style.css" -> {
+                        try {
+                            return HttpUtils.buildTextResponse(
+                                    readFile("frontend/style.css"),
+                                    "text/css"
+                            );
+                        } catch (IOException e) {
+                            return HttpUtils.buildErrorResponse(500, "Could not read CSS file");
+                        }
                     }
-                } else if (path.equals("/script.js")) {
-                    try {
-                        return HttpUtils.buildTextResponse(readFile("frontend/script.js"),
-                                "application/javascript");
-                    } catch (IOException e) {
-                        return HttpUtils.buildErrorResponse(500, "Could not read JavaScript file");
+                    case "/script.js" -> {
+                        try {
+                            return HttpUtils.buildTextResponse(readFile("frontend/script.js"),
+                                    "application/javascript");
+                        } catch (IOException e) {
+                            return HttpUtils.buildErrorResponse(500, "Could not read JavaScript file");
+                        }
                     }
-                } else if (path.equals("/messages")) {
-                    List<Message> messages = messageStore.getAllMessages();
-                    String jsonMessages = HttpUtils.messagesToJson(messages);
-                    return HttpUtils.buildJsonResponse(jsonMessages);
+                    case "/messages" -> {
+                        List<Message> messages = messageStore.getAllMessages();
+                        String jsonMessages = HttpUtils.messagesToJson(messages);
+                        return HttpUtils.buildJsonResponse(jsonMessages);
+                    }
                 }
             } case "POST" -> {
                 if (path.equals("/send")) {
